@@ -1,0 +1,58 @@
+server:
+  port: 8090
+
+logging: 
+  level:
+    root: INFO
+    com.github.elgleidson.multi.database: DEBUG
+    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+spring:
+  application:
+    name: Multi-Database
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      write-date-timestamps-as-nanoseconds: false
+
+management:
+  endpoint:
+    beans:
+      enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /management
+      exposure:
+        include: "*"
+
+app:
+  db1:
+    database:
+      url: jdbc:postgresql://localhost:5432/multi_db1
+      username: multi_db
+      password: multi_db
+    jpa:
+      database: postgresql
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        # disable jdbc metadata (avoid the exception: PgConnection.createClob() is not yet implemented)
+        hibernate.temp.use_jdbc_metadata_defaults: false
+        hibernate.format_sql: true
+    liquibase:
+      change-log: classpath:/db/changelog/db.changelog-db1.xml
+  db2:
+    database:
+      url: jdbc:mysql://localhost:3306/multi_db2
+      username: multi_db
+      password: multi_db
+    jpa:
+      database: mysql
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.MySQLInnoDBDialect
+        hibernate.format_sql: true
+    liquibase:
+      change-log: classpath:/db/changelog/db.changelog-db2.xml
